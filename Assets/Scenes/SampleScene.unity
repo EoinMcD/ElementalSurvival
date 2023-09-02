@@ -1284,7 +1284,7 @@ MonoBehaviour:
   sliding: 0
   orientation: {fileID: 170420657}
   jumpForce: 14
-  jumpCooldown: 0.2
+  jumpCooldown: 0.3
   airMultiplier: 0.4
   airDrag: 0.66
   maxJumps: 2

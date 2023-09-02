@@ -6,36 +6,33 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
-    [SerializeField] float walkSpeed;
-    [SerializeField] float sprintSpeed;
-    [SerializeField] float groundDrag;
-    [SerializeField] float slideSpeed;
+    [SerializeField] float walkSpeed=7f;
+    [SerializeField] float sprintSpeed=14f;
+    [SerializeField] float groundDrag=8f;
+    [SerializeField] float slideSpeed=14f;
     
-
-    float desiredMoveSpeed;
-    float lastDesiredMoveSpeed;
     public bool sliding;
 
     [Space]
     [SerializeField] Transform orientation;
 
     [Header("Jumping")]
-    [SerializeField] float jumpForce;
-    [SerializeField] float jumpCooldown;
-    [SerializeField] float airMultiplier;
-    [SerializeField] float airDrag;
-    [SerializeField] float maxJumps;
+    [SerializeField] float jumpForce=14f;
+    [SerializeField] float jumpCooldown=0.3f;
+    [SerializeField] float airMultiplier=0.4f;
+    [SerializeField] float airDrag=.66f;
+    [SerializeField] int maxJumps=1;
     float numJumps;
     bool canJump = true;
     bool readyToJump;
 
     [Header("Crouching")]
-    [SerializeField] float crouchSpeed;
-    [SerializeField] float crouchYScale;
+    [SerializeField] float crouchSpeed=3.5f;
+    [SerializeField] float crouchYScale=.5f;
     float startYScale;
 
     [Header("Ground Check")]
-    [SerializeField] float playerHeight;
+    [SerializeField] float playerHeight=2;
     bool grounded;
     
     [Header("Keybinds")]
@@ -44,9 +41,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] KeyCode crouchKey = KeyCode.LeftControl;
 
     [Header("Slope Handling")]
-    [SerializeField] float maxSlopeAngle;
-    [SerializeField] float speedIncreaseMultiplier;
-    [SerializeField] float slopeIncreaseMultiplier;
+    [SerializeField] float maxSlopeAngle=40f;
+    [SerializeField] float speedIncreaseMultiplier=1.5f;
+    [SerializeField] float slopeIncreaseMultiplier=2.5f;
     RaycastHit slopeHit;
     bool exitingSlope;
 
@@ -116,12 +113,11 @@ public class PlayerMovement : MonoBehaviour
     void MyInput() {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        if(Input.GetKey(jumpKey) && numJumps>=1 && readyToJump) {
-            readyToJump = false;
-            numJumps--;
+        if(((Input.GetKey(jumpKey)&&grounded) || (Input.GetKeyDown(jumpKey) && moveState==MovementState.air)) && numJumps>=1 && readyToJump) {
+            
             Jump();
 
-            Invoke(nameof(ResetJump),jumpCooldown);
+            
         }
 
         if(Input.GetKeyDown(crouchKey)) {
@@ -171,16 +167,19 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Jump() {
+        readyToJump = false;
+        numJumps--;
         exitingSlope = true;
         Debug.Log("JUMPING");
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         if(sliding) {
             rb.AddForce(transform.up * jumpForce*1.5f, ForceMode.Impulse);
-
+            rb.AddForce(transform.forward *30f,ForceMode.Impulse);
         }
         else {
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
+        Invoke(nameof(ResetJump),jumpCooldown);
     }
 
         
