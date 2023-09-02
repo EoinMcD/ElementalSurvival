@@ -23,7 +23,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float airDrag=.66f;
     [SerializeField] int maxJumps=1;
     float numJumps;
-    bool canJump = true;
     bool readyToJump;
 
     [Header("Crouching")]
