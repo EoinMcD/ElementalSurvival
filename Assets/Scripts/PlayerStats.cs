@@ -6,18 +6,23 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour
 {
     [Header("Health")]
-    [SerializeField] int maxHealth;
-    [SerializeField] int healthRegen;
-    [SerializeField] float maxWaitTimeForRegen;
+    [SerializeField] float maxHealth;
+    [SerializeField] float healthRegen;
+    [SerializeField] float maxWaitTimeForHealthRegen;
     [SerializeField] Slider healthBar;
-    float timer;
-    int health;
+    float healthDelayTimer;
+    float health;
     bool selfHealing;
 
     [Header("Stamina")]
-    [SerializeField] int maxStamina;
+    [SerializeField] float maxStamina;
     [SerializeField] float staminaRegen;
-    int stamina;
+    [SerializeField] float maxWaitTimeForStaminaRegen;
+    [SerializeField] Slider staminaBar;
+    [SerializeField] float staminaDrain;
+    [SerializeField] float staminaDrainTimer;
+    bool sprinting;
+    float stamina;
 
     void Start() {
         health=maxHealth;
@@ -28,30 +33,27 @@ public class PlayerStats : MonoBehaviour
     private void Update() {
         healthBar.value = health;
         healthBar.maxValue = maxHealth;
-        if (Input.GetKeyDown(KeyCode.E)) {
-            StartCoroutine("SelfHeal");
-        }
-        if (Input.GetKeyDown(KeyCode.F)) {
-            Damage(20);
-        }
+        staminaBar.value=stamina;
+        staminaBar.maxValue=maxStamina;
+        
     }
 
     #region  Health
-    public void setHealth(int health){
+    public void setHealth(float health){
         this.health=health;
     }
 
-    public void addHealth(int health) {
+    public void addHealth(float health) {
         this.health+=health;
     }
 
-    public int getHealth() {
+    public float getHealth() {
         return stamina;
     }
 
     IEnumerator CountDownTimer() {
-        while (timer >0) {
-            timer-=1;
+        while (healthDelayTimer >0) {
+            healthDelayTimer-=1;
             yield return new WaitForSeconds(1);
         }
         StartCoroutine("SelfHeal");
@@ -60,13 +62,13 @@ public class PlayerStats : MonoBehaviour
     IEnumerator SelfHeal() {
         while (health <maxHealth) {
             addHealth(healthRegen);
-            yield return new WaitForSeconds(maxWaitTimeForRegen);
+            yield return new WaitForSeconds(maxWaitTimeForHealthRegen);
         }
     }
 
-    public void Damage(int damage){
+    public void Damage(float damage){
         health -=damage;
-        timer=maxWaitTimeForRegen;
+        healthDelayTimer=maxWaitTimeForHealthRegen;
         StopCoroutine("CountDownTimer");
         StopCoroutine("SelfHeal");
         StartCoroutine("CountDownTimer");
@@ -78,16 +80,41 @@ public class PlayerStats : MonoBehaviour
     #endregion
 
     #region  Stamina
-    public void setStamina(int stamina){
+    public void setStamina(float stamina){
         this.stamina=stamina;
     }
 
-    public void addStamina(int stamina) {
+    public void addStamina(float stamina) {
         this.stamina+=stamina;
     }
 
-    public int getStamina() {
+    public float getStamina() {
         return stamina;
+    }
+
+    public void StartSprinting(){
+        sprinting=true;
+        StartCoroutine("Sprinting");
+        StopCoroutine("StaminaRegen");
+    }
+
+    IEnumerator Sprinting(){
+        stamina-=staminaDrain;
+        yield return new WaitForSeconds(staminaDrainTimer);
+        StartCoroutine("Sprinting");
+    }
+
+    IEnumerator StaminaRegen() {
+        while (stamina <maxStamina) {
+            addStamina(staminaRegen);
+            yield return new WaitForSeconds(maxWaitTimeForStaminaRegen);
+        }
+    }
+
+    public void StopSprinting(){
+        sprinting=false;
+        StopCoroutine("Sprinting");
+        StartCoroutine("StaminaRegen");
     }
     #endregion
 }

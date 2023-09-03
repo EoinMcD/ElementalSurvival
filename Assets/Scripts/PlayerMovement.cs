@@ -55,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
     [Space]
     [SerializeField] MovementState moveState;
     PlayerSliding ps;
+    PlayerStats pStats;
 
     public enum MovementState {
         walking,
@@ -67,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start() {
         rb = GetComponent<Rigidbody>();
         ps = GetComponent<PlayerSliding>();
+        pStats = GetComponent<PlayerStats>();
         rb.freezeRotation = true;
 
         
@@ -112,6 +114,12 @@ public class PlayerMovement : MonoBehaviour
     void MyInput() {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+        if(Input.GetKeyDown(sprintKey)) {
+            pStats.StartSprinting();
+        }
+        if(Input.GetKeyUp(sprintKey)) {
+            pStats.StopSprinting();
+        }
         if(((Input.GetKey(jumpKey)&&grounded) || (Input.GetKeyDown(jumpKey) && moveState==MovementState.air)) && numJumps>=1 && readyToJump) {
             
             Jump();
