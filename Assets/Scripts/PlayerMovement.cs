@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
+    float maxSpeed;
     [SerializeField] float walkSpeed=7f;
     [SerializeField] float sprintSpeed=14f;
     [SerializeField] float groundDrag=8f;
@@ -14,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public bool sliding;
 
     [Space]
-    [SerializeField] Transform orientation;
+    [SerializeField] public Transform orientation;
 
     [Header("Jumping")]
     [SerializeField] float jumpForce=14f;
@@ -49,7 +50,9 @@ public class PlayerMovement : MonoBehaviour
     float horizontalInput;
     float verticalInput;
 
-    Vector3 moveDir;
+    public Vector3 moveDir;
+    public bool applyDrag = true;
+    bool minimiseVelocity=true;
 
     Rigidbody rb;
     [Space]
@@ -83,12 +86,6 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         StateHandler();
         IsGrounded();
-        
-
-        
-
-
-
        
     }
 
@@ -96,9 +93,34 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
+    public void SetMaxSpeed(float maxSpeed, float delayToRest){
+        minimiseVelocity=false;
+        this.maxSpeed = moveSpeed;
+        moveSpeed = maxSpeed;
+        applyDrag = false;
+       
+        Invoke(nameof(ResetMaxSpeed),delayToRest);
+
+    }
+
+    void ResetMaxSpeed() {
+        StartCoroutine("SlowDownPlayerSmoothly");
+    }
+
+    IEnumerator SlowDownPlayerSmoothly() {
+        while(moveSpeed > sprintSpeed) {
+            Debug.Log("Reducting movespeed");
+            moveSpeed-=Time.deltaTime;
+            yield return new WaitForSeconds(.2f);
+        }
+        minimiseVelocity=true;
+        applyDrag=true;
+        moveSpeed = maxSpeed;
+    }
+
     bool IsGrounded() {
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * .5f + .1f);
-        if(grounded) {
+        if(grounded && applyDrag) {
             rb.drag = groundDrag;
         }
         else { rb.drag = airDrag; }
@@ -159,12 +181,12 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void SpeedControl() {
-        if(OnSlope() && !exitingSlope) {
+        if(OnSlope() && !exitingSlope && minimiseVelocity) {
             if(rb.velocity.magnitude > moveSpeed) {
                 rb.velocity= rb.velocity.normalized * moveSpeed;
             }
         }
-        else {
+        else if(minimiseVelocity) {
             Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
             if(flatVel.magnitude > moveSpeed) {
                 Vector3 limitVel= flatVel.normalized * moveSpeed;
