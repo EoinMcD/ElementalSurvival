@@ -9,15 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6e8e1330bd5fa64fb78f3d3a4b33a86, type: 3}
-  m_Name: New A_Air Dash
+  m_Script: {fileID: 11500000, guid: 94ecf8b3b0216074b85498e41371b59d, type: 3}
+  m_Name: New A_Air Updraft
   m_EditorClassIdentifier: 
-  abilityName: AirDash
+  abilityName: AirUpdraft
   abilityType: 0
   coolDownTime: 3
   activeTime: 0.4
-  maxSpeed: 0
+  maxSpeed: 40
   stopInput: 0
-  dashVelocity: 1000
-  dashUpForce: 3
-  allowAllDirection: 1
+  dashUpForce: 40

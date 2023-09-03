@@ -8,6 +8,8 @@ public class Ability : ScriptableObject
     public AbilityType abilityType;
     public float coolDownTime;
     public float activeTime;
+    public float maxSpeed;
+    public bool stopInput;
 
     public virtual void Activate(GameObject parent){}
     

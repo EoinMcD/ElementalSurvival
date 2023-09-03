@@ -7,7 +7,6 @@ public class a_AirDash : Ability
 {
     [SerializeField] float dashVelocity;
     [SerializeField] float dashUpForce;
-    [SerializeField] float dashMaxSpeed;
     [SerializeField] bool allowAllDirection;
     
 
@@ -21,7 +20,6 @@ public class a_AirDash : Ability
 
         Vector3 direction = GetDirection(orientation);
         Vector3 forceToApply = direction * dashVelocity + orientation.up * dashUpForce;
-        movement.SetMaxSpeed(dashMaxSpeed,activeTime);
         rb.AddForce(forceToApply, ForceMode.Impulse);
     }
 

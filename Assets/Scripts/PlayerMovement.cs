@@ -6,13 +6,13 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
-    float maxSpeed;
     [SerializeField] float walkSpeed=7f;
     [SerializeField] float sprintSpeed=14f;
     [SerializeField] float groundDrag=8f;
     [SerializeField] float slideSpeed=14f;
     
     public bool sliding;
+    bool canInput = true;
 
     [Space]
     [SerializeField] public Transform orientation;
@@ -47,6 +47,11 @@ public class PlayerMovement : MonoBehaviour
     RaycastHit slopeHit;
     bool exitingSlope;
 
+    [Header("Ability Use")]
+    bool isAbility;
+    float abilitySpeed;
+
+
     float horizontalInput;
     float verticalInput;
 
@@ -61,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
     PlayerStats pStats;
 
     public enum MovementState {
+        ability,
         walking,
         sprinting,
         air,
@@ -93,29 +99,15 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
-    public void SetMaxSpeed(float maxSpeed, float delayToRest){
-        minimiseVelocity=false;
-        this.maxSpeed = moveSpeed;
-        moveSpeed = maxSpeed;
-        applyDrag = false;
-       
-        Invoke(nameof(ResetMaxSpeed),delayToRest);
+
+    public void SetUseAbility(bool isAbility, bool doesAffectVelocity){
+        this.isAbility = isAbility;
+        minimiseVelocity=!doesAffectVelocity;
 
     }
 
-    void ResetMaxSpeed() {
-        StartCoroutine("SlowDownPlayerSmoothly");
-    }
-
-    IEnumerator SlowDownPlayerSmoothly() {
-        while(moveSpeed > sprintSpeed) {
-            Debug.Log("Reducting movespeed");
-            moveSpeed-=Time.deltaTime;
-            yield return new WaitForSeconds(.2f);
-        }
-        minimiseVelocity=true;
-        applyDrag=true;
-        moveSpeed = maxSpeed;
+    public void StopInput(bool stopInput) {
+        canInput = !stopInput;
     }
 
     bool IsGrounded() {
@@ -132,6 +124,9 @@ public class PlayerMovement : MonoBehaviour
 
     
 
+    public void ResetVelocity() {
+        rb.velocity = new Vector3(0f, 0f, 0f);
+    }
 
     void MyInput() {
         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -160,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void MovePlayer() {
+        if(!canInput) {return;}
         moveDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
         if(OnSlope() && !exitingSlope) {
             rb.AddForce(GetSlopeMoveDirection(moveDir) * moveSpeed * 20, ForceMode.Force);
@@ -220,7 +216,10 @@ public class PlayerMovement : MonoBehaviour
 
 
     void StateHandler() {
-        if(sliding) {
+        if(isAbility) {
+            moveState = MovementState.ability;   
+        }
+        else if(sliding) {
             moveState = MovementState.sliding;
             if(!ps.decreasingSlide) {
                 moveSpeed = slideSpeed;

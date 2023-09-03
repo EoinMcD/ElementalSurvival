@@ -14,13 +14,22 @@ public class PlayerAbilityHolder : MonoBehaviour
         cooldown
     }
     AbilityState state = AbilityState.ready;
+    PlayerMovement pm;
 
     [SerializeField] KeyCode key;
+
+    private void Start() {
+        pm=GetComponent<PlayerMovement>();
+    }
 
     private void Update() {
         switch (state) {
             case AbilityState.ready:
                 if(Input.GetKeyDown(key)) {
+                    if(abilityList[0].maxSpeed!=0) {
+                        pm.SetUseAbility(true,true);
+                    }
+                    else{pm.SetUseAbility(true,false);}
                     abilityList[0].Activate(gameObject);
                     state = AbilityState.active;
                     activeTime = abilityList[0].activeTime;
@@ -32,6 +41,7 @@ public class PlayerAbilityHolder : MonoBehaviour
                 }
                 else {
                     state =AbilityState.cooldown;
+                    pm.SetUseAbility(false,false);
                     coolDownTime=abilityList[0].coolDownTime;
                 }
             break;
