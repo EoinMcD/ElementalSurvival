@@ -20,6 +20,9 @@ public class PlayerAbilityHolder : MonoBehaviour
 
     private void Start() {
         pm=GetComponent<PlayerMovement>();
+        foreach(Ability ability in abilityList) {
+            ability.CollectAbility(gameObject);
+        }
     }
 
     private void Update() {
@@ -30,7 +33,7 @@ public class PlayerAbilityHolder : MonoBehaviour
                         pm.SetUseAbility(true,true);
                     }
                     else{pm.SetUseAbility(true,false);}
-                    abilityList[0].Activate(gameObject);
+                    abilityList[0].Activate();
                     state = AbilityState.active;
                     activeTime = abilityList[0].activeTime;
                 }

@@ -8,16 +8,12 @@ public class a_AirUpdraft : Ability
     [SerializeField] float dashUpForce;
     
 
-    public override void Activate(GameObject parent)
+    public override void Activate()
     {
         Debug.Log("DASHING");
-        PlayerMovement movement = parent.GetComponent<PlayerMovement>();
-        Rigidbody rb = parent.GetComponent<Rigidbody>();
-        PlayerCam playerCam = parent.GetComponent<PlayerCam>();
-        Transform orientation = movement.orientation;
 
         Vector3 forceToApply = orientation.up * dashUpForce;
-        movement.ResetVelocity();
+        pm.ResetVelocity();
         rb.AddForce(forceToApply, ForceMode.Impulse);
     }
 

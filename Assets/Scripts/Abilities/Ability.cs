@@ -11,7 +11,17 @@ public class Ability : ScriptableObject
     public float maxSpeed;
     public bool stopInput;
 
-    public virtual void Activate(GameObject parent){}
+    protected PlayerMovement pm;
+    protected Rigidbody rb;
+    protected Transform orientation;
+
+    public virtual void Activate(){}
+
+    public void CollectAbility(GameObject parent){
+        pm= parent.GetComponent<PlayerMovement>();
+        rb = parent.GetComponent<Rigidbody>();
+        orientation = pm.orientation;
+    }
     
 }
 

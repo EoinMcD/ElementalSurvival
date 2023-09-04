@@ -10,13 +10,9 @@ public class a_AirDash : Ability
     [SerializeField] bool allowAllDirection;
     
 
-    public override void Activate(GameObject parent)
+    public override void Activate()
     {
         Debug.Log("DASHING");
-        PlayerMovement movement = parent.GetComponent<PlayerMovement>();
-        Rigidbody rb = parent.GetComponent<Rigidbody>();
-        Transform orientation = movement.orientation;
-        PlayerCam playerCam = parent.GetComponent<PlayerCam>();
 
         Vector3 direction = GetDirection(orientation);
         Vector3 forceToApply = direction * dashVelocity + orientation.up * dashUpForce;
