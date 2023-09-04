@@ -7,6 +7,7 @@ public class PlayerAbilityHolder : MonoBehaviour
     [SerializeField] Ability[] abilityList;
     float coolDownTime;
     float activeTime;
+    
 
     enum AbilityState{
         ready,
@@ -16,7 +17,8 @@ public class PlayerAbilityHolder : MonoBehaviour
     AbilityState state = AbilityState.ready;
     PlayerMovement pm;
 
-    [SerializeField] KeyCode key;
+    [SerializeField] KeyCode[] abilityKeys;
+    [SerializeField] ArrayList abilitiesOnCooldown = new ArrayList();
 
     private void Start() {
         pm=GetComponent<PlayerMovement>();
@@ -26,17 +28,29 @@ public class PlayerAbilityHolder : MonoBehaviour
     }
 
     private void Update() {
+        if(Input.GetKeyDown(KeyCode.G)) {
+            for(int i=0 ;i< abilitiesOnCooldown.Count;i++) {
+                Debug.Log(abilitiesOnCooldown[i]);
+            }
+        }
         switch (state) {
             case AbilityState.ready:
-                if(Input.GetKeyDown(key)) {
-                    if(abilityList[0].maxSpeed!=0) {
-                        pm.SetUseAbility(true,true);
+                for(int i=0 ;i< abilityKeys.Length;i++) {
+                    Debug.Log(abilityList[i].useAbilityCoolDownTime);
+                    if(Input.GetKeyDown(abilityKeys[i]) && abilityList[i].useAbilityCoolDownTime ==abilityList[i].maxAbilityCoolDownTimer ) {
+                        Debug.Log("USING ABILITY " + abilityKeys[i]);
+                        if(abilityList[i].maxSpeed!=0) {
+                            pm.SetUseAbility(true,true);
+                        }
+                        else{pm.SetUseAbility(true,false);}
+                        abilityList[i].Activate();
+                        AbilityCoolDown(abilityList[i]);
+                        state = AbilityState.active;
+                        activeTime = abilityList[i].activeTime;
                     }
-                    else{pm.SetUseAbility(true,false);}
-                    abilityList[0].Activate();
-                    state = AbilityState.active;
-                    activeTime = abilityList[0].activeTime;
+                    
                 }
+
             break;
             case AbilityState.active:
                 if(activeTime>0) {
@@ -58,5 +72,25 @@ public class PlayerAbilityHolder : MonoBehaviour
             break;
         }
         
+    }
+
+    void AbilityCoolDown(Ability ability){
+        abilitiesOnCooldown.Add(ability);
+        StopCoroutine("AbilityCoolDownCoRoutine");
+        StartCoroutine("AbilityCoolDownCoRoutine");
+    }   
+
+    IEnumerator AbilityCoolDownCoRoutine() {
+        while(abilitiesOnCooldown.Count!=0) {
+            foreach(Ability ability in abilitiesOnCooldown.ToArray()) {
+                ability.maxAbilityCoolDownTimer-=1;
+                Debug.Log(ability.maxAbilityCoolDownTimer);
+                if(ability.maxAbilityCoolDownTimer<=0) {
+                    ability.maxAbilityCoolDownTimer=ability.useAbilityCoolDownTime;
+                    abilitiesOnCooldown.Remove(ability);
+                }
+            }
+            yield return new WaitForSeconds(1);
+        }
     }
 }

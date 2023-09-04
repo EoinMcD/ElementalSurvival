@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e8e1330bd5fa64fb78f3d3a4b33a86, type: 3}
   m_Name: New A_Air Dash
   m_EditorClassIdentifier: 
-  abilityName: AirDash
+  abilityName: Air Dash
   abilityType: 0
-  coolDownTime: 3
+  coolDownTime: 0.3
+  useAbilityCoolDownTime: 3
   activeTime: 0.4
-  maxSpeed: 0
+  maxSpeed: 40
   stopInput: 0
-  dashVelocity: 1000
-  dashUpForce: 3
+  dashVelocity: 20
+  dashUpForce: 5
   allowAllDirection: 1

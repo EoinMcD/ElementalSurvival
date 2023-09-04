@@ -5,12 +5,13 @@ using UnityEngine;
 [CreateAssetMenu]
 public class a_AirUpdraft : Ability
 {
+    [Header("Specific Ability")]
     [SerializeField] float dashUpForce;
     
 
     public override void Activate()
     {
-        Debug.Log("DASHING");
+        Debug.Log("UP DASHING");
 
         Vector3 forceToApply = orientation.up * dashUpForce;
         pm.ResetVelocity();

@@ -1874,7 +1874,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityList:
   - {fileID: 11400000, guid: a49f96dca4ca1b64e9caaa6b4a5cd001, type: 2}
-  key: 101
+  - {fileID: 11400000, guid: d561c9d01106e48499b4d8325faa7040, type: 2}
+  abilityKeys: 6500000066000000
 --- !u!1 &1138787434
 GameObject:
   m_ObjectHideFlags: 0

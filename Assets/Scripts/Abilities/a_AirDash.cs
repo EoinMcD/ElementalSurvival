@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class a_AirDash : Ability
 {
+    [Header("Specific Ability")]
     [SerializeField] float dashVelocity;
     [SerializeField] float dashUpForce;
     [SerializeField] bool allowAllDirection;
@@ -17,6 +19,7 @@ public class a_AirDash : Ability
         Vector3 direction = GetDirection(orientation);
         Vector3 forceToApply = direction * dashVelocity + orientation.up * dashUpForce;
         rb.AddForce(forceToApply, ForceMode.Impulse);
+        
     }
 
     Vector3 GetDirection(Transform forwardT) {
@@ -24,8 +27,11 @@ public class a_AirDash : Ability
         float verticalInput = Input.GetAxisRaw("Vertical");
 
         Vector3 direction = new Vector3();
-        if(allowAllDirection) {
+        if(allowAllDirection && (verticalInput!=0||horizontalInput!=0) ) {
             direction = forwardT.forward * verticalInput + forwardT.right* horizontalInput;
+        }
+        else if(allowAllDirection) {
+             direction = forwardT.forward;
         }
         else {
             direction = forwardT.forward;
