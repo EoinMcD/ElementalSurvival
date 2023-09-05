@@ -14,12 +14,13 @@ public class AbilityUI : MonoBehaviour
     void Start()
     {
         abilityStatsUI=GetComponentInParent<AbilityStatsUI>();
-        
         playerHolder=abilityStatsUI.GetHolder(); 
         if(abilityStatsUI.GetNumChildren()<=playerHolder.NumOfAbilities()){
+            
             abilityName.SetText(playerHolder.GetAbilityInList(abilityStatsUI.GetNumChildren()).abilityName.ToString());
         
             abilityKey.SetText(playerHolder.GetKeyInList(abilityStatsUI.GetNumChildren()).ToString());
+            abilityStatsUI.IncreaseChildren();
         }
         else{
             Destroy(this.gameObject);

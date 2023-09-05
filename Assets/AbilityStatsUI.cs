@@ -10,12 +10,24 @@ public class AbilityStatsUI : MonoBehaviour
     AbilityUI[] abilityUi;
     int numChildren=0;
 
-    public void AddStat(PlayerAbilityHolder holder) {
-        if(playerHolder==null) {
-            playerHolder=holder;
+    public void AddStat(PlayerAbilityHolder holder)
+    {
+        Debug.Log("AbilityStatsUI");
+        if (playerHolder == null)
+        {
+            playerHolder = holder;
         }
+        CreateAbilityUI();
+
+    }
+
+    public void IncreaseChildren() {
         numChildren++;
-        Instantiate(abilityPrefab,this.gameObject.transform);
+    }
+
+    void CreateAbilityUI() {
+        Instantiate(abilityPrefab, this.gameObject.transform);
+        
     }
 
     public PlayerAbilityHolder GetHolder() {
@@ -23,7 +35,7 @@ public class AbilityStatsUI : MonoBehaviour
     }
 
     public int GetNumChildren() {
-        return numChildren-1;
+        return numChildren;
     }
 
 }
