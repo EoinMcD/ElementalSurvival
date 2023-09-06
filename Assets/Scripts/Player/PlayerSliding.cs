@@ -75,9 +75,9 @@ public class PlayerSliding : MonoBehaviour
         }
         if(slideTimer <=.4) {
             decreasingSlide=true;
-            Debug.Log(pm.moveSpeed);
-            if(!(pm.moveSpeed <= 0.05)) {
-                pm.moveSpeed-= Time.deltaTime * 10;
+            Debug.Log(pm.GetMoveSpeed());
+            if(!(pm.GetMoveSpeed() <= 0.05)) {
+                pm.DecreaseMoveSpeed(Time.deltaTime * 10);
             }
         }
     }

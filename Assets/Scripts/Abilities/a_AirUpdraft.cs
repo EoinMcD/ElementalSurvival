@@ -9,10 +9,7 @@ public class a_AirUpdraft : Ability
     [SerializeField] float dashUpForce;
     
 
-    public override void Activate()
-    {
-        Debug.Log("UP DASHING");
-
+    public override void Activate() {
         Vector3 forceToApply = orientation.up * dashUpForce;
         pm.ResetVelocity();
         rb.AddForce(forceToApply, ForceMode.Impulse);

@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    #region  Variables
     [Header("Movement")]
-    public float moveSpeed;
-    [SerializeField] float walkSpeed=7f;
+    [SerializeField] float walkSpeed=7f;    
     [SerializeField] float sprintSpeed=14f;
     [SerializeField] float groundDrag=8f;
     [SerializeField] float slideSpeed=14f;
+    float moveSpeed;                                //Speed that player is moving . Is dynamically set to different speeds
     
-    public bool sliding;
-    bool canInput = true;
-
     [Space]
-    [SerializeField] public Transform orientation;
+    [SerializeField] public Transform orientation;  //Direction the player is facing : orientation.forward
 
     [Header("Jumping")]
     [SerializeField] float jumpForce=14f;
@@ -42,28 +41,26 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Slope Handling")]
     [SerializeField] float maxSlopeAngle=40f;
-    [SerializeField] float speedIncreaseMultiplier=1.5f;
-    [SerializeField] float slopeIncreaseMultiplier=2.5f;
     RaycastHit slopeHit;
     bool exitingSlope;
-
+ 
     [Header("Ability Use")]
     bool isAbility;
     float abilitySpeed;
 
+    [Header("References")]    
+    MovementState moveState;
+    PlayerSliding ps;
+    PlayerStats pStats;
+    Rigidbody rb;
 
+    public bool sliding;
+    bool canInput = true;
     float horizontalInput;
     float verticalInput;
-
     public Vector3 moveDir;
     public bool applyDrag = true;
     bool minimiseVelocity=true;
-
-    Rigidbody rb;
-    [Space]
-    [SerializeField] MovementState moveState;
-    PlayerSliding ps;
-    PlayerStats pStats;
 
     public enum MovementState {
         ability,
@@ -73,7 +70,9 @@ public class PlayerMovement : MonoBehaviour
         sliding,
         crouching
     }
+    #endregion
 
+    #region  InBuiltFunctions
     private void Start() {
         rb = GetComponent<Rigidbody>();
         ps = GetComponent<PlayerSliding>();
@@ -88,7 +87,6 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         MyInput();
-
         SpeedControl();
         StateHandler();
         IsGrounded();
@@ -98,36 +96,9 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate() {
         MovePlayer();
     }
+    #endregion
 
-
-    public void SetUseAbility(bool isAbility, bool doesAffectVelocity){
-        this.isAbility = isAbility;
-        minimiseVelocity=!doesAffectVelocity;
-
-    }
-
-    public void StopInput(bool stopInput) {
-        canInput = !stopInput;
-    }
-
-    bool IsGrounded() {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * .5f + .1f);
-        if(grounded && applyDrag) {
-            rb.drag = groundDrag;
-        }
-        else { rb.drag = airDrag; }
-        if(grounded && readyToJump) {
-            numJumps = maxJumps;
-        }
-        return grounded;
-    }
-
-    
-
-    public void ResetVelocity() {
-        rb.velocity = new Vector3(0f, 0f, 0f);
-    }
-
+    #region  Input and Movement
     void MyInput() {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
@@ -176,6 +147,10 @@ public class PlayerMovement : MonoBehaviour
         rb.useGravity = !OnSlope();
     }
 
+    public void StopInput(bool stopInput) {
+        canInput = !stopInput;
+    }
+
     void SpeedControl() {
         if(OnSlope() && !exitingSlope && minimiseVelocity) {
             if(rb.velocity.magnitude > moveSpeed) {
@@ -191,7 +166,36 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void Jump() {
+    public void ResetVelocity() {
+        rb.velocity = new Vector3(0f, 0f, 0f);
+    }
+
+    public float GetMoveSpeed(){
+        return moveSpeed;
+    }
+
+    public void DecreaseMoveSpeed(float amountToDecrease){
+        moveSpeed-=amountToDecrease;
+    }
+    #endregion
+
+    #region  GroundCheck and Jumping
+    bool IsGrounded() {
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * .5f + .1f);
+        if(grounded && applyDrag) {
+            rb.drag = groundDrag;
+        }
+        else { rb.drag = airDrag; }
+        if(grounded && readyToJump) {
+            numJumps = maxJumps;
+        }
+        return grounded;
+    }
+    public bool isPlayerGrounded(){
+        return grounded;
+    }
+
+     void Jump() {
         readyToJump = false;
         numJumps--;
         exitingSlope = true;
@@ -207,15 +211,38 @@ public class PlayerMovement : MonoBehaviour
         Invoke(nameof(ResetJump),jumpCooldown);
     }
 
-        
-
     void ResetJump() {
         readyToJump =true;
         exitingSlope = false;
     }
+    #endregion
 
+    #region  Slopes
+     public bool OnSlope() {
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit , playerHeight * .5f +.3f)) {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle <maxSlopeAngle && angle !=0;
+        }
 
-    void StateHandler() {
+        return false;
+    }
+
+    public Vector3 GetSlopeMoveDirection(Vector3 direction) {
+        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
+
+    }
+    #endregion
+
+    #region  Ability
+    public void SetUseAbility(bool isAbility, bool doesAffectVelocity){
+        this.isAbility = isAbility;
+        minimiseVelocity=!doesAffectVelocity;
+
+    } 
+    #endregion
+
+    #region  StateHandling
+     void StateHandler() {
         if(isAbility) {
             moveState = MovementState.ability;   
         }
@@ -241,22 +268,5 @@ public class PlayerMovement : MonoBehaviour
             moveState = MovementState.air;
         }
     }
-
-    public bool OnSlope() {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit , playerHeight * .5f +.3f)) {
-            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            return angle <maxSlopeAngle && angle !=0;
-        }
-
-        return false;
-    }
-
-    public Vector3 GetSlopeMoveDirection(Vector3 direction) {
-        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
-
-    }
-
-    public bool isPlayerGrounded(){
-        return grounded;
-    }
+    #endregion
 }

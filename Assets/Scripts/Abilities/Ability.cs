@@ -2,6 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+To add a new ability :
+Create new script a_NAMEOFABILITY : Ability
+If adding new variables add header = [Header("Specific Ability")]
+
+Ability class will already have PlayerMovement, PlayerStats, Rigidbody and Orientation from player
+Overrride Activate class to give functionality for ability (a_AirUpdraft.cs for simple example)
+
+Add [CreateAssetMenu] to above the class
+Right click in asset menu and create scriptable object for new ability and set stats
+
+You should now be able to attach to player ability holder script to give ability
+*/
+
 public class Ability : ScriptableObject
 {
     [Header("Base Ability")]
