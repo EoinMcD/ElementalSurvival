@@ -32,6 +32,7 @@ public class Ability : ScriptableObject
     protected PlayerStats pStats;
     protected Rigidbody rb;
     protected Transform orientation;
+    protected PlayerAbilityHolder holder;
 
     public virtual void Activate(){}
 
@@ -39,8 +40,13 @@ public class Ability : ScriptableObject
         pm= parent.GetComponent<PlayerMovement>();
         pStats= parent.GetComponent<PlayerStats>();
         rb = parent.GetComponent<Rigidbody>();
+        holder=parent.GetComponent<PlayerAbilityHolder>();
         orientation = pm.orientation;
         maxAbilityCoolDownTimer = useAbilityCoolDownTime;
+    }
+
+    public KeyCode GetAbilityKey(Ability ability){
+        return holder.GetKeyForAbility(ability);
     }
 
     

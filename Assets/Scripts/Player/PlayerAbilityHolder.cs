@@ -41,6 +41,17 @@ public class PlayerAbilityHolder : MonoBehaviour
         return abilityKeys[i];
     }
 
+    public KeyCode GetKeyForAbility(Ability ability) {
+        int i=0;
+        foreach(Ability tempAbility in abilityList){
+            if(tempAbility.abilityName==ability.abilityName) {
+                return GetKeyInList(i);
+            }
+            else{i++;}
+        }
+        return KeyCode.Backspace;
+    }
+
     private void Update() {
         if(Input.GetKeyDown(KeyCode.G)) {
             for(int i=0 ;i< abilitiesOnCooldown.Count;i++) {

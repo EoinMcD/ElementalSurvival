@@ -22,6 +22,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float airMultiplier=0.4f;
     [SerializeField] float airDrag=.66f;
     [SerializeField] int maxJumps=1;
+    [SerializeField] const float playerGravity =9.81f;
+    float gravity;
+    bool useGravity;
     float numJumps;
     bool readyToJump;
 
@@ -77,7 +80,10 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         ps = GetComponent<PlayerSliding>();
         pStats = GetComponent<PlayerStats>();
+        rb.useGravity=false;
         rb.freezeRotation = true;
+        gravity=playerGravity;
+        useGravity=true;
 
         
         readyToJump = true;
@@ -90,7 +96,9 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         StateHandler();
         IsGrounded();
-       
+        if(useGravity){
+            DoGravity();
+        }
     }
 
     private void FixedUpdate() {
@@ -144,7 +152,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(moveDir.normalized * moveSpeed  * airMultiplier*10, ForceMode.Force);
         }
 
-        rb.useGravity = !OnSlope();
+        UseGravity(!OnSlope());
     }
 
     public void StopInput(bool stopInput) {
@@ -195,7 +203,18 @@ public class PlayerMovement : MonoBehaviour
         return grounded;
     }
 
-     void Jump() {
+    void UseGravity(bool useGravity){
+        this.useGravity=useGravity;
+    }
+
+    void DoGravity(){
+        rb.AddForce(Vector3.down *gravity, ForceMode.Acceleration);
+    }
+
+    public void SetGravityForce(float gravity=playerGravity) {
+        this.gravity=gravity;
+    }
+    void Jump() {
         readyToJump = false;
         numJumps--;
         exitingSlope = true;
@@ -203,7 +222,7 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         if(sliding) {
             rb.AddForce(transform.up * jumpForce*1.5f, ForceMode.Impulse);
-            rb.AddForce(transform.forward *30f,ForceMode.Impulse);
+            rb.AddForce(orientation.forward *50f,ForceMode.Impulse);
         }
         else {
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
