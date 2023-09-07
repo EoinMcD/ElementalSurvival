@@ -137,14 +137,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e78448b845a2b428d6304b3f4fa93c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
   walkSpeed: 7
   sprintSpeed: 14
   groundDrag: 8
   slideSpeed: 13
-  sliding: 0
   orientation: {fileID: 4061417037318369771}
-  jumpForce: 14
+  jumpForce: 25
   jumpCooldown: 0.3
   airMultiplier: 0.4
   airDrag: 0.66
@@ -156,11 +154,9 @@ MonoBehaviour:
   sprintKey: 304
   crouchKey: 306
   maxSlopeAngle: 40
-  speedIncreaseMultiplier: 1.5
-  slopeIncreaseMultiplier: 2.5
+  sliding: 0
   moveDir: {x: 0, y: 0, z: 0}
   applyDrag: 1
-  moveState: 0
 --- !u!114 &4061417036365142304
 MonoBehaviour:
   m_ObjectHideFlags: 0

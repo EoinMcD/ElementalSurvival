@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float airMultiplier=0.4f;
     [SerializeField] float airDrag=.66f;
     [SerializeField] int maxJumps=1;
-    [SerializeField] const float playerGravity =9.81f;
+    const float playerGravity =3.5f;
     float gravity;
     bool useGravity;
     float numJumps;
@@ -157,6 +157,12 @@ public class PlayerMovement : MonoBehaviour
 
     public void StopInput(bool stopInput) {
         canInput = !stopInput;
+    }
+
+    public bool IsPlayerMoving(){
+        if(horizontalInput!=0 || verticalInput!=0 ) {
+            return true;
+        } else{return false;}
     }
 
     void SpeedControl() {

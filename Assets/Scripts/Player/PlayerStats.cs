@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerStats : MonoBehaviour
+public class PlayerStats : MonoBehaviour 
 {
+
     [Header("Health")]
     [SerializeField] float maxHealth;
     [SerializeField] float healthRegen;
@@ -24,10 +25,13 @@ public class PlayerStats : MonoBehaviour
     bool sprinting;
     float stamina;
 
+    PlayerMovement pm;
+
     void Start() {
         health=maxHealth;
         stamina = maxStamina;
         selfHealing=false;
+        pm = GetComponent<PlayerMovement>();
     }
 
     private void Update() {
@@ -99,7 +103,10 @@ public class PlayerStats : MonoBehaviour
     }
 
     IEnumerator Sprinting(){
-        stamina-=staminaDrain;
+        if(pm.IsPlayerMoving() && stamina>=0) {
+            Debug.Log("Hellotheree");
+            stamina-=staminaDrain;     
+        }
         yield return new WaitForSeconds(staminaDrainTimer);
         StartCoroutine("Sprinting");
     }

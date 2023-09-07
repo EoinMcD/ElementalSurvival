@@ -2526,6 +2526,10 @@ PrefabInstance:
       propertyPath: staminaBar
       value: 
       objectReference: {fileID: 643915512}
+    - target: {fileID: 4061417036365142307, guid: ad9db9b25e976484ba969dccc2c29fa1, type: 3}
+      propertyPath: playerGravity
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4061417036365142310, guid: ad9db9b25e976484ba969dccc2c29fa1, type: 3}
       propertyPath: abilityStatsUI
       value: 
